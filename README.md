@@ -95,5 +95,11 @@ All connected clients will receive live temperature updates in real-time.
 ![image](https://github.com/user-attachments/assets/80a6f77c-7ccb-4b4a-9cd5-9d8af358104e)
 ---
 ## 💭 Output
-
-[data-1747639162895.csv](https://github.com/user-attachments/files/20279004/data-1747639162895.csv)
+```
+[Uploa"id","value","timestamp"
+1,32.53,"2025-05-19 11:05:06.824135"
+2,27.53,"2025-05-19 11:05:08.822743"
+3,39.08,"2025-05-19 11:05:10.852203"
+4,35.82,"2025-05-19 11:05:12.835395"
+5,38.22,"2025-05-19 11:05:14.830645"
+```
