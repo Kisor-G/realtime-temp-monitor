@@ -92,3 +92,5 @@ All connected clients will receive live temperature updates in real-time.
 * Add authentication for WebSocket connections
 
 ---
+![image](https://github.com/user-attachments/assets/80a6f77c-7ccb-4b4a-9cd5-9d8af358104e)
+
