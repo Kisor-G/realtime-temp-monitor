@@ -18,11 +18,11 @@ Simulate and stream temperature sensor data using a real-time pipeline powered b
 ## 📁 Project Structure
 
 ```
-temperature-streaming/
-├── producer/        # Sends temperature data to RabbitMQ
-├── consumer/        # Listens to RabbitMQ and stores data in PostgreSQL
-├── app/             # FastAPI app with WebSocket endpoint
-├── db/              # DB setup and schema scripts
+realtime-temp-monitor/
+├── producer.py       # Sends temperature data to RabbitMQ
+├── consumer.py        # Listens to RabbitMQ and stores data in PostgreSQL
+├── main.py/             # FastAPI app with WebSocket endpoint
+├── db_setup.py/              # DB setup and schema scripts
 ├── requirements.txt
 └── README.md
 ```
@@ -37,7 +37,7 @@ Ensure **RabbitMQ** and **PostgreSQL** are running locally.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/temperature-streaming.git
+git clone https://github.com/your-username/realtime-temp-monitor.git
 cd temperature-streaming
 
 # Install Python dependencies
