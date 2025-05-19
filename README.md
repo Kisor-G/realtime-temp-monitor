@@ -1,7 +1,3 @@
-Here’s an enhanced and polished version of your README with improved formatting, structure, clarity, and a more professional tone:
-
----
-
 # 🌡️ Real-Time Temperature Monitoring with RabbitMQ, PostgreSQL & FastAPI
 
 Simulate and stream temperature sensor data using a real-time pipeline powered by **RabbitMQ**, **PostgreSQL**, and **FastAPI**. This project publishes synthetic temperature data, processes it via RabbitMQ, stores it in a PostgreSQL database, and broadcasts updates to WebSocket-connected clients.
@@ -96,5 +92,3 @@ All connected clients will receive live temperature updates in real-time.
 * Add authentication for WebSocket connections
 
 ---
-
-Let me know if you’d like a sample `README.md` file generated or GitHub badges (Python version, license, etc.) included!
