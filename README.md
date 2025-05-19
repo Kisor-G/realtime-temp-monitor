@@ -1,4 +1,4 @@
-[data-1747639162895.csv](https://github.com/user-attachments/files/20278992/data-1747639162895.csv)# 🌡️ Real-Time Temperature Monitoring with RabbitMQ, PostgreSQL & FastAPI
+# 🌡️ Real-Time Temperature Monitoring with RabbitMQ, PostgreSQL & FastAPI
 
 Simulate and stream temperature sensor data using a real-time pipeline powered by **RabbitMQ**, **PostgreSQL**, and **FastAPI**. This project publishes synthetic temperature data, processes it via RabbitMQ, stores it in a PostgreSQL database, and broadcasts updates to WebSocket-connected clients.
 
@@ -95,10 +95,5 @@ All connected clients will receive live temperature updates in real-time.
 ![image](https://github.com/user-attachments/assets/80a6f77c-7ccb-4b4a-9cd5-9d8af358104e)
 ---
 ## 💭 Output
-[Uploading data-1747639162895.csv"id","value","timestamp"
-1,32.53,"2025-05-19 11:05:06.824135"
-2,27.53,"2025-05-19 11:05:08.822743"
-3,39.08,"2025-05-19 11:05:10.852203"
 
-
-
+[data-1747639162895.csv](https://github.com/user-attachments/files/20279004/data-1747639162895.csv)
