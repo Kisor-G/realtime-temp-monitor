@@ -95,6 +95,7 @@ All connected clients will receive live temperature updates in real-time.
 ![image](https://github.com/user-attachments/assets/80a6f77c-7ccb-4b4a-9cd5-9d8af358104e)
 ---
 ## 💭 Output
+  The output is stored in Postgres 
 ```
 ["id","value","timestamp"
 1,32.53,"2025-05-19 11:05:06.824135"
