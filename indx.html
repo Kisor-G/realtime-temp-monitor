@@ -1,0 +1,486 @@
+<!-- <!DOCTYPE html>
+<html>
+<body>
+  <h1>Temperature Monitor</h1>
+  <div id="data"></div>
+  <script>
+    let ws = new WebSocket("ws://localhost:8000/ws/temperature");
+    ws.onmessage = event => {
+      const data = JSON.parse(event.data);
+      document.getElementById("data").innerText = `Temperature: ${data.temperature} °C at ${data.timestamp}`;
+    };
+  </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temperature Monitoring System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+      padding: 20px;
+    }
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    h1 {
+      color: #2d3748;
+      font-size: 24px;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+    }
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #48bb78;
+      margin-right: 8px;
+    }
+    .status-text {
+      font-size: 14px;
+      color: #718096;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      margin-bottom: 15px;
+      font-size: 18px;
+      color: #4a5568;
+      font-weight: 600;
+    }
+    .temperature-display {
+      display: flex;
+      align-items: center;
+      font-size: 48px;
+      font-weight: 600;
+      color: #2b6cb0;
+    }
+    .unit {
+      font-size: 24px;
+      color: #718096;
+      margin-left: 10px;
+    }
+    .timestamp {
+      margin-top: 10px;
+      color: #718096;
+      font-size: 14px;
+    }
+    #chart-container {
+      height: 300px;
+      margin-top: 20px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .stat-card {
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #f8fafc;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #4a5568;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: #718096;
+    }
+    .settings {
+      margin-top: 20px;
+    }
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .alert-settings {
+      padding: 15px;
+      background-color: #f8fafc;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #3182ce;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #fed7d7;
+      color: #c53030;
+      padding: 15px 20px;
+      border-radius: 4px;
+      display: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+    }
+    .notification.show {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <header>
+      <h1>Temperature Monitoring System</h1>
+      <div class="status">
+        <div class="status-indicator" id="connection-status"></div>
+        <span class="status-text" id="connection-text">Connecting...</span>
+      </div>
+    </header>
+    
+    <div class="grid">
+      <div>
+        <div class="card">
+          <div class="card-header">Current Temperature</div>
+          <div class="temperature-display">
+            <span id="current-temp">--</span>
+            <span class="unit">°C</span>
+          </div>
+          <div class="timestamp" id="timestamp">Last updated: --</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">Temperature History</div>
+          <div id="chart-container"></div>
+        </div>
+      </div>
+      
+      <div>
+        <div class="card">
+          <div class="card-header">Statistics</div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="avg-temp">--</div>
+              <div class="stat-label">Average (24h)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="max-temp">--</div>
+              <div class="stat-label">Maximum (24h)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="min-temp">--</div>
+              <div class="stat-label">Minimum (24h)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="data-points">0</div>
+              <div class="stat-label">Data Points</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card settings">
+          <div class="settings-header">
+            <div class="card-header">Alert Settings</div>
+          </div>
+          <div class="alert-settings">
+            <div class="form-group">
+              <label for="high-temp">High Temperature Alert (°C)</label>
+              <input type="number" id="high-temp" value="30" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="low-temp">Low Temperature Alert (°C)</label>
+              <input type="number" id="low-temp" value="15" step="0.1">
+            </div>
+            <button id="save-settings">Save Settings</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="notification" id="alert-notification">
+    Temperature alert! Current temperature is outside the defined range.
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script>
+    // Global variables
+    let ws;
+    let temperatureData = [];
+    let chart;
+    let maxDataPoints = 50;
+    let highTempAlert = 30;
+    let lowTempAlert = 15;
+    
+    // DOM Elements
+    const currentTempEl = document.getElementById('current-temp');
+    const timestampEl = document.getElementById('timestamp');
+    const connectionStatusEl = document.getElementById('connection-status');
+    const connectionTextEl = document.getElementById('connection-text');
+    const avgTempEl = document.getElementById('avg-temp');
+    const maxTempEl = document.getElementById('max-temp');
+    const minTempEl = document.getElementById('min-temp');
+    const dataPointsEl = document.getElementById('data-points');
+    const alertNotificationEl = document.getElementById('alert-notification');
+    const saveSettingsBtn = document.getElementById('save-settings');
+    
+    // Initialize WebSocket connection
+    function initWebSocket() {
+      ws = new WebSocket("ws://localhost:8000/ws/temperature");
+      
+      ws.onopen = () => {
+        console.log('WebSocket connection established');
+        connectionStatusEl.style.backgroundColor = '#48bb78';
+        connectionTextEl.textContent = 'Connected';
+      };
+      
+      ws.onclose = () => {
+        console.log('WebSocket connection closed');
+        connectionStatusEl.style.backgroundColor = '#e53e3e';
+        connectionTextEl.textContent = 'Disconnected';
+        
+        // Try to reconnect after 5 seconds
+        setTimeout(initWebSocket, 5000);
+      };
+      
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        connectionStatusEl.style.backgroundColor = '#e53e3e';
+        connectionTextEl.textContent = 'Error';
+      };
+      
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          updateDashboard(data);
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
+        }
+      };
+    }
+    
+    // Initialize Chart.js
+    function initChart() {
+      const ctx = document.createElement('canvas');
+      document.getElementById('chart-container').appendChild(ctx);
+      
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Temperature (°C)',
+            data: [],
+            borderColor: '#4299e1',
+            backgroundColor: 'rgba(66, 153, 225, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3,
+            pointBackgroundColor: '#4299e1'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              grid: {
+                drawBorder: false
+              },
+              ticks: {
+                callback: function(value) {
+                  return value + '°C';
+                }
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                maxRotation: 0,
+                maxTicksLimit: 8
+              }
+            }
+          },
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+          }
+        }
+      });
+    }
+    
+    // Format timestamp
+    function formatTimestamp(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString();
+    }
+    
+    // Update dashboard with new data
+    function updateDashboard(data) {
+      // Update current temperature display
+      currentTempEl.textContent = parseFloat(data.temperature).toFixed(1);
+      timestampEl.textContent = `Last updated: ${formatTimestamp(data.timestamp)}`;
+      
+      // Add data to array
+      temperatureData.push({
+        temperature: parseFloat(data.temperature),
+        timestamp: data.timestamp
+      });
+      
+      // Limit array size
+      if (temperatureData.length > maxDataPoints) {
+        temperatureData.shift();
+      }
+      
+      // Update chart
+      updateChart();
+      
+      // Update statistics
+      updateStatistics();
+      
+      // Check for temperature alerts
+      checkAlerts(parseFloat(data.temperature));
+      
+      // Update data points count
+      dataPointsEl.textContent = temperatureData.length;
+    }
+    
+    // Update chart with new data
+    function updateChart() {
+      chart.data.labels = temperatureData.map(data => formatTimestamp(data.timestamp));
+      chart.data.datasets[0].data = temperatureData.map(data => data.temperature);
+      chart.update();
+    }
+    
+    // Update statistics display
+    function updateStatistics() {
+      if (temperatureData.length === 0) return;
+      
+      const temperatures = temperatureData.map(data => data.temperature);
+      
+      // Calculate average
+      const avg = temperatures.reduce((sum, temp) => sum + temp, 0) / temperatures.length;
+      avgTempEl.textContent = avg.toFixed(1) + '°C';
+      
+      // Find max and min
+      const max = Math.max(...temperatures);
+      const min = Math.min(...temperatures);
+      
+      maxTempEl.textContent = max.toFixed(1) + '°C';
+      minTempEl.textContent = min.toFixed(1) + '°C';
+    }
+    
+    // Check for temperature alerts
+    function checkAlerts(temperature) {
+      if (temperature > highTempAlert || temperature < lowTempAlert) {
+        showAlert(`Temperature alert! Current temperature (${temperature.toFixed(1)}°C) is outside the defined range.`);
+      }
+    }
+    
+    // Show alert notification
+    function showAlert(message) {
+      alertNotificationEl.textContent = message;
+      alertNotificationEl.classList.add('show');
+      
+      setTimeout(() => {
+        alertNotificationEl.classList.remove('show');
+      }, 5000);
+    }
+    
+    // Event listener for save settings button
+    saveSettingsBtn.addEventListener('click', () => {
+      const highTempInput = document.getElementById('high-temp');
+      const lowTempInput = document.getElementById('low-temp');
+      
+      highTempAlert = parseFloat(highTempInput.value);
+      lowTempAlert = parseFloat(lowTempInput.value);
+      
+      showAlert('Alert settings saved successfully.');
+    });
+    
+    // Initialize the application
+    function init() {
+      initWebSocket();
+      initChart();
+    }
+    
+    // Start the application
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
